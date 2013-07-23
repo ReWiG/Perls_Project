@@ -2,6 +2,7 @@ package Perls_Package;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
+import java.awt.TrayIcon;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,23 +23,33 @@ public class MySQL {
     private final String UserPas = "123456";
 
     //создание соединения с БД 
-    public void ConnectDB() {
+    public Boolean ConnectDB() throws InterruptedException {
         try {
             Class.forName(this.DriverName);
         } catch (ClassNotFoundException ex) {
-            JOptionPane.showMessageDialog(null, "Отсутстует драйвер MySQL, работа программы невозможна");
+            Perls.trayIcon.displayMessage("Ошибка", "Отсутстует драйвер MySQL, работа программы невозможна",
+                    TrayIcon.MessageType.ERROR);
             System.err.println(ex.toString());
+            Thread.sleep(5000);
+            System.exit(0);                        
         }
+        
         String err = setConnect(this.Path, this.UserName, this.UserPas);
         if (err != null) {
-            JOptionPane.showMessageDialog(null, "Нет коннекта");
-            System.err.println(err);
-        }
- 
-        err = setStat(this.Connect);
-        if (err != null) {
-            JOptionPane.showMessageDialog(null, "Х его знает");
-            System.err.println(err);
+            Perls.trayIcon.displayMessage("Ошибка", "Отсутстувет соединение с БД, работа в автономном режиме",
+                    TrayIcon.MessageType.ERROR);
+            System.err.println(err);       
+            return false;
+        } else { 
+            err = setStat(this.Connect);
+            if (err != null) {
+                Perls.trayIcon.displayMessage("Ошибка", "Ошибка работы с БД, работа в автономном режиме",
+                    TrayIcon.MessageType.ERROR);
+                System.err.println(err);
+                return false;
+            } else {
+                return true; // Если все нормально то возвращаем true
+            }
         }
     }
 
