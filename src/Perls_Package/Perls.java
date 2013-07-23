@@ -36,10 +36,11 @@ import javax.swing.border.EmptyBorder;
 
 public class Perls {
     
+    static JFrame frame;
     static JDialog dialog; // Диалог добавления перла
     static MySQL sql = new MySQL(); // Менеджер БД
     static String author; // Пользователь приложения
-    static TrayIcon trayIcon;
+    public static TrayIcon trayIcon;
     // Список фраз после добавления
     private static final String[] words = {"Как бог!",
         "Пизданул как господь!",
@@ -58,7 +59,7 @@ public class Perls {
         "Очешуеть можно!"
     };
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
         
         // Устанавливаем пользователя (подробнее в описании метода)
         author = setAuthor();
@@ -67,82 +68,30 @@ public class Perls {
         tray();
 
         if(!sql.isConnect()) // Если нет подключения
-            sql.ConnectDB(); // коннектимся
-        
-        ResultSet executeQuery = sql.executeSelect("select * from perls;");
+            if(sql.ConnectDB()){ // коннектимся
+                // Работаем с БД
+                ResultSet executeQuery = sql.executeSelect("select * from perls;");
 
-        while (executeQuery.next()) {
-            System.out.println(executeQuery.getString(1));
-        }
+                while (executeQuery.next()) {
+                    System.out.println(executeQuery.getString(1));
+                }
+            }
+        
         
         
 
 
         //System.setOut(new PrintStream(System.out, true, "cp866"));
-        JFrame frame = new JFrame("Сингулярность перлов");
-        JTextField tf = new JTextField("");
-
-        tf.setText("Разгон Адронного коллайдера, запуск 7990, активация 8350...");
-        frame.add(tf);
-        
-        //Отображение окна.
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        // Модальный диалог
-        dialog = new JDialog(frame, "Добавь перл, сука!", true);
-
-        // Панель
-        JPanel p = new JPanel();
-        p.setLayout(new GridBagLayout());
-        p.setBorder(new EmptyBorder(10, 10, 10, 10));
-        p.add(new JLabel("Добавь свой божественный перл сюда ↓"), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST,
-            GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
-        final JTextArea ta = new JTextArea(15, 10);
-        ta.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        p.add(ta, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.EAST,
-            GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
-        JButton buttonAdd = new JButton("Жги!");
-        
-        // Обработчик нажатия кнопки
-        buttonAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(!ta.getText().isEmpty()) {
-                    // Добавляем в базу запись 
-                    sql.executePerl(ta.getText(), author);
-
-                    // Окно к рандом-сообщением
-                    Random rand = new Random();
-                    String phrases = words[rand.nextInt(words.length)];
-                    JOptionPane.showMessageDialog(null, phrases, "Божественно!", JOptionPane.INFORMATION_MESSAGE);
-                    dialog.setVisible(false);
-                    //System.exit(0);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Ты не написал ничего =(", "Ащипка!", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
-        p.add(buttonAdd, new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.EAST,
-            GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
-
-        // Переопределяем обработчик закртия окна
-        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        dialog.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent we) {
-                    JOptionPane.showMessageDialog(null, "<html>Ты что с ума сошел? Дорогой друг издалека прилетает на минуточку — а у вас нет <s>торта</s> шутки!?</html>",
-                            "Ну... Ц!", JOptionPane.INFORMATION_MESSAGE);
-                    dialog.setVisible(false);
-                    //System.exit(0);
-                }
-            });
-        // Отображение окна
-        dialog.setContentPane(p);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
+//        frame = new JFrame("Сингулярность перлов");
+//        JTextField tf = new JTextField("");
+//
+//        tf.setText("Разгон Адронного коллайдера, запуск 7990, активация 8350...");
+//        frame.add(tf);
+//        
+//        //Отображение окна.
+//        frame.pack();
+//        frame.setLocationRelativeTo(null);
+//        frame.setVisible(true);        
     }
     
     /**
@@ -191,17 +140,13 @@ public class Perls {
             exitItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.exit(0);                    
+                    sql.CloseDB();
+                    System.exit(0);                           
                 }
             });
             
             JMenuItem addPerlItem = new JMenuItem("Добавить перл");
-            addPerlItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);                    
-                }
-            });
+            addPerlItem.addActionListener(addPerlListener);
             
             // Добаляем элементы в меню
             popup.add(addPerlItem);
@@ -254,4 +199,64 @@ public class Perls {
         }
     }
 
+    static ActionListener addPerlListener = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            // Модальный диалог
+            dialog = new JDialog(frame, "Добавь перл, сука!", true);
+
+            // Панель
+            JPanel p = new JPanel();
+            p.setLayout(new GridBagLayout());
+            p.setBorder(new EmptyBorder(10, 10, 10, 10));
+            p.add(new JLabel("Добавь свой божественный перл сюда ↓"), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST,
+                GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
+            final JTextArea ta = new JTextArea(15, 10);
+            ta.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            p.add(ta, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.EAST,
+                GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
+            JButton buttonAdd = new JButton("Жги!");
+
+            // Обработчик нажатия кнопки
+            buttonAdd.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(!ta.getText().isEmpty()) {
+                        // Добавляем в базу запись 
+                        sql.executePerl(ta.getText(), author);
+
+                        // Окно к рандом-сообщением
+                        Random rand = new Random();
+                        String phrases = words[rand.nextInt(words.length)];
+                        JOptionPane.showMessageDialog(null, phrases, "Божественно!", JOptionPane.INFORMATION_MESSAGE);
+                        dialog.setVisible(false);
+                        //System.exit(0);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Ты не написал ничего =(", "Ащипка!", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+            });
+            p.add(buttonAdd, new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.EAST,
+                GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
+
+            // Переопределяем обработчик закртия окна
+            dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            dialog.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent we) {
+                        JOptionPane.showMessageDialog(null, "<html>Ты что с ума сошел? Дорогой друг издалека прилетает на минуточку — а у вас нет <s>торта</s> шутки!?</html>",
+                                "Ну... Ц!", JOptionPane.INFORMATION_MESSAGE);
+                        dialog.setVisible(false);
+                        //System.exit(0);
+                    }
+                });
+            // Отображение окна
+            dialog.setContentPane(p);
+            dialog.pack();
+            dialog.setLocationRelativeTo(null);
+            dialog.setVisible(true);
+        }
+    };
 }
