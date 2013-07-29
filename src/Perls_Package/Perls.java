@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.MediaTracker;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
@@ -32,6 +33,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import sun.security.x509.OIDMap;
 
 
 public class Perls {
@@ -140,7 +142,7 @@ public class Perls {
             exitItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    sql.CloseDB();
+                    sql.CloseDB(); // Всегда пытаемся закрыть осединение
                     System.exit(0);                           
                 }
             });
