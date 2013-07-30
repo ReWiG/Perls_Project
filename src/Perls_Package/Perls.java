@@ -26,7 +26,7 @@ public class Perls {
     
     static JFrame frame;
     static JDialog dialog; // Диалог добавления перла
-    static String author = "Вася"; // Пользователь приложения
+    static String author; // Пользователь приложения
     static TrayManager trayMng; // Менеджер трея
     
     public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
