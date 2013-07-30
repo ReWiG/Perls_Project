@@ -1,87 +1,44 @@
 package Perls_Package;
 
-import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
-import java.awt.MediaTracker;
-import java.awt.SystemTray;
-import java.awt.Toolkit;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Random;
 import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import sun.security.x509.OIDMap;
 
 
 public class Perls {
     
     static JFrame frame;
     static JDialog dialog; // Диалог добавления перла
-    static MySQL sql = new MySQL(); // Менеджер БД
-    static String author; // Пользователь приложения
-    public static TrayIcon trayIcon;
-    // Список фраз после добавления
-    private static final String[] words = {"Как бог!",
-        "Пизданул как господь!",
-        "От души!",
-        "Лол! xD",
-        "АЩАЩАЩАЩАЩА!",
-        "Ну ты жучааара...",
-        "АБАСЦАКА ВАЩЕ!",
-        "Могёшь!",
-        "Ай да ты!",
-        "2 дибила!",
-        "И сядь сверху!",
-        "Жжоте чувачки!",
-        "А не педагог ли ты часом?",
-        "Генитально!",
-        "Очешуеть можно!"
-    };
-
+    static String author = "Вася"; // Пользователь приложения
+    static TrayManager trayMng; // Менеджер трея
+    
     public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
         
         // Устанавливаем пользователя (подробнее в описании метода)
         author = setAuthor();
         
         // Автивируем трей (и обработчики событий)
-        tray();
+        trayMng = new TrayManager();
 
-        if(!sql.isConnect()) // Если нет подключения
-            if(sql.ConnectDB()){ // коннектимся
-                // Работаем с БД
-                ResultSet executeQuery = sql.executeSelect("select * from perls;");
-
-                while (executeQuery.next()) {
-                    System.out.println(executeQuery.getString(1));
-                }
-            }
         
         
-        
-
 
         //System.setOut(new PrintStream(System.out, true, "cp866"));
 //        frame = new JFrame("Сингулярность перлов");
@@ -122,85 +79,10 @@ public class Perls {
             return ath;
         }      
     }
-    
-    /**
-     * Работа с треем
-     */
-    static void tray() {
-        
-        // Проеврса поддржки трея
-        if (SystemTray.isSupported()) {
-            
-            // Получаем системный трей
-            final SystemTray tray = SystemTray.getSystemTray();
-         
-            // Создаем меню трея
-            final JPopupMenu popup = new JPopupMenu();
-            
-            // Создаем элементЫ меню и их обработчики
-            JMenuItem exitItem = new JMenuItem("Выход");
-            exitItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    sql.CloseDB(); // Всегда пытаемся закрыть осединение
-                    System.exit(0);                           
-                }
-            });
-            
-            JMenuItem addPerlItem = new JMenuItem("Добавить перл");
-            addPerlItem.addActionListener(addPerlListener);
-            
-            // Добаляем элементы в меню
-            popup.add(addPerlItem);
-            popup.add(exitItem);
- 
-            // Устанавливаем картинку, инициализируем трэй
-            Image image = Toolkit.getDefaultToolkit().getImage("tray.gif");
-            trayIcon = new TrayIcon(image, "Perls");
-            
- 
-            ActionListener actionListener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    trayIcon.displayMessage(e.getActionCommand(),
-                            "An Action Event Has Been Performed!",
-                            TrayIcon.MessageType.INFO);
-                }
-            };
- 
-            trayIcon.setImageAutoSize(true);
-            trayIcon.addActionListener(actionListener);
-            trayIcon.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    if (e.isPopupTrigger()) {
-                        popup.setLocation(e.getX(), e.getY());
-                        popup.setInvoker(popup);
-                        popup.setVisible(true);
-                    }
-                }
-                
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if(e.getButton() == MouseEvent.BUTTON2){
-                    System.out.println("Tray Icon - Mouse clicked!");   
-                    trayIcon.displayMessage("Я тут", "Заебись", TrayIcon.MessageType.ERROR);
-                    }
-                }
-            });
- 
-            try {
-                tray.add(trayIcon);                
-            } catch (AWTException e) {
-                System.err.println("TrayIcon could not be added.");
-            }
- 
-        } else {
-            JOptionPane.showMessageDialog(null, "Трей не поддержиавается, работа программы не возможна!");
-            System.exit(0); // Завершение работы
-        }
-    }
 
+    /**
+     * Обработчик "Добавить перл" (Используется в TrayManager)
+     */
     static ActionListener addPerlListener = new ActionListener() {
 
         @Override
@@ -226,13 +108,10 @@ public class Perls {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(!ta.getText().isEmpty()) {
-                        // Добавляем в базу запись 
-                        sql.executePerl(ta.getText(), author);
-
-                        // Окно к рандом-сообщением
-                        Random rand = new Random();
-                        String phrases = words[rand.nextInt(words.length)];
-                        JOptionPane.showMessageDialog(null, phrases, "Божественно!", JOptionPane.INFORMATION_MESSAGE);
+                        // Добавляем в базу запись                         
+                        ManagerDB m = new ManagerDB();
+                        m.setDB(ta.getText(), author);
+                        
                         dialog.setVisible(false);
                         //System.exit(0);
                     } else {
