@@ -41,6 +41,9 @@ public class TrayManager {
                 }
             });
             
+            JMenuItem addReAuthorItem = new JMenuItem("Установить пользователя");
+            addReAuthorItem.addActionListener(addPerlListener);
+            
             JMenuItem addPerlItem = new JMenuItem("Добавить перл");
             addPerlItem.addActionListener(addPerlListener);
             

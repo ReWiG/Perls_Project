@@ -1,6 +1,7 @@
 package Perls_Package;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -18,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
@@ -68,7 +70,10 @@ public class Perls {
                 if(showInputDialog.equals("")) {
                     JOptionPane.showMessageDialog(null, "Не ввел имя, значит будешь Уасей!");
                     showInputDialog = "Уася";
-                }                
+                } else if(showInputDialog.length()>50) {
+                    JOptionPane.showMessageDialog(null, "Сильно длинное имя, будешь Уасей!");
+                    showInputDialog = "Уася";
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "Не ввел имя, значит будешь Уасей!");
                 showInputDialog = "Уася";
@@ -97,9 +102,12 @@ public class Perls {
             p.setBorder(new EmptyBorder(10, 10, 10, 10));
             p.add(new JLabel("Добавь свой божественный перл сюда ↓"), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
-            final JTextArea ta = new JTextArea(15, 10);
+            final JTextArea ta = new JTextArea(20, 25);
+            ta.setLineWrap(true);
             ta.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            p.add(ta, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.EAST,
+            JScrollPane scroll = new JScrollPane(ta);
+
+            p.add(scroll, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.EAST,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
             JButton buttonAdd = new JButton("Жги!");
 
@@ -126,9 +134,17 @@ public class Perls {
                             case "The request failed":
                                 trayMng.trayMessage("Ошибка запроса о_О");
                                 break;
+                            case "Нет соединения с сервером, не добавлено!":
+                                trayMng.trayMessage("Нет соединения с сервером, не добавлено!");
+                                break;
+                            case "Ошибка преобразования строки о_О":
+                                trayMng.trayMessage("Ошибка преобразования строки о_О");
+                                break;
+                            default:
+                                trayMng.trayMessage(result);
+                                break;
                         }
                         dialog.setVisible(false);
-                        //System.exit(0);
                     } else {
                         JOptionPane.showMessageDialog(null, "Ты не написал ничего =(", "Ащипка!", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -140,14 +156,13 @@ public class Perls {
             // Переопределяем обработчик закртия окна
             dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
             dialog.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent we) {
-                        JOptionPane.showMessageDialog(null, "<html>Ты что с ума сошел? Дорогой друг издалека прилетает на минуточку — а у вас нет <s>торта</s> шутки!?</html>",
-                                "Ну... Ц!", JOptionPane.INFORMATION_MESSAGE);
-                        dialog.setVisible(false);
-                        //System.exit(0);
-                    }
-                });
+                @Override
+                public void windowClosing(WindowEvent we) {
+                    JOptionPane.showMessageDialog(null, "<html>Ты что с ума сошел? Дорогой друг издалека прилетает на минуточку — а у вас нет <s>торта</s> шутки!?</html>",
+                            "Ну... Ц!", JOptionPane.INFORMATION_MESSAGE);
+                    dialog.setVisible(false);
+                }
+            });
             // Отображение окна
             dialog.setContentPane(p);
             dialog.pack();
