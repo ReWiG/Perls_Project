@@ -17,47 +17,47 @@ import javax.swing.JPopupMenu;
 
 public class TrayManager {
     public static TrayIcon trayIcon;
-    
+
     public void trayMessage(String mess) {
         trayIcon.displayMessage(null, mess, TrayIcon.MessageType.ERROR);
     }
-    
+
     // Конструктор
     public TrayManager() {
         // Проеврса поддржки трея
         if (SystemTray.isSupported()) {
-            
+
             // Получаем системный трей
             final SystemTray tray = SystemTray.getSystemTray();
-         
+
             // Создаем меню трея
             final JPopupMenu popup = new JPopupMenu();
-            
+
             // Создаем элементЫ меню и их обработчики
             JMenuItem exitItem = new JMenuItem("Выход");
             exitItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.exit(0);                           
+                    System.exit(0);
                 }
             });
-            
+
             JMenuItem addReAuthorItem = new JMenuItem("Установить пользователя");
             addReAuthorItem.addActionListener(addReAuthorListener);
-            
+
             JMenuItem addPerlItem = new JMenuItem("Добавить перл");
             addPerlItem.addActionListener(addPerlListener);
-            
+
             // Добаляем элементы в меню
             popup.add(addPerlItem);
             popup.add(addReAuthorItem);
             popup.add(exitItem);
- 
+
             // Устанавливаем картинку, инициализируем трэй
             Image image = Toolkit.getDefaultToolkit().getImage("tray.gif");
             trayIcon = new TrayIcon(image, Perls.author);
-            
- 
+
+
             ActionListener actionListener = new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -66,7 +66,7 @@ public class TrayManager {
                             TrayIcon.MessageType.INFO);
                 }
             };
- 
+
             trayIcon.setImageAutoSize(true);
             trayIcon.addActionListener(actionListener);
             trayIcon.addMouseListener(new MouseAdapter() {
@@ -78,28 +78,28 @@ public class TrayManager {
                         popup.setVisible(true);
                     }
                 }
-                
+
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if(e.getButton() == MouseEvent.BUTTON2){
-                        System.out.println("Tray Icon - Mouse clicked!");   
+                        System.out.println("Tray Icon - Mouse clicked!");
                         trayIcon.displayMessage("Я тут", "Заебись", TrayIcon.MessageType.ERROR);
                     }
                 }
             });
- 
+
             try {
-                tray.add(trayIcon);                
+                tray.add(trayIcon);
             } catch (AWTException e) {
                 System.err.println("TrayIcon could not be added.");
             }
- 
+
         } else {
             JOptionPane.showMessageDialog(null, "Трей не поддержиавается, работа программы не возможна!");
             System.exit(0); // Завершение работы
         }
     }
-    
+
     /**
      * Переустаналивает пользователя
      */
@@ -109,7 +109,7 @@ public class TrayManager {
         public void actionPerformed(ActionEvent e) {
             Preferences userPrefs = Preferences.userRoot().node("perlsconf");
             userPrefs.remove("author");
-            Perls.setAuthor();
+            Perls.author = Perls.setAuthor();
         }
     };
 }
