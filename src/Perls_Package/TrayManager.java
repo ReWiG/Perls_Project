@@ -49,11 +49,12 @@ public class TrayManager {
             
             // Добаляем элементы в меню
             popup.add(addPerlItem);
+            popup.add(addReAuthorItem);
             popup.add(exitItem);
  
             // Устанавливаем картинку, инициализируем трэй
             Image image = Toolkit.getDefaultToolkit().getImage("tray.gif");
-            trayIcon = new TrayIcon(image, "Perls");
+            trayIcon = new TrayIcon(image, Perls.author);
             
  
             ActionListener actionListener = new ActionListener() {
