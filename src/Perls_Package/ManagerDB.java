@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import javax.swing.JOptionPane;
 
 public class ManagerDB {
     private String setScriptURL = "http://lolperl.zz.mu/insert_perl_234b_658z_2.php";
@@ -13,9 +15,12 @@ public class ManagerDB {
         HttpURLConnection conn;
         String result="";
         try {
-            URL url = new URL(setScriptURL+"?perl="+perl+"&author="+author);
+            URL url = new URL(setScriptURL+"?perl=" + 
+                    URLEncoder.encode(perl, "UTF-8") +
+                    "&author=" + URLEncoder.encode(author, "UTF-8"));
             conn = (HttpURLConnection) url.openConnection();            
-            conn.setRequestProperty("User-Agent", "Java bot. Author: "+author);            
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("User-Agent", "Java bot " + author);            
             conn.connect();            
             int code=conn.getResponseCode();
 
@@ -26,10 +31,9 @@ public class ManagerDB {
                     result+=inputLine;
                 }                
                 in.close();
-                trayMng.trayMessage("Перл успешно добален! Ответ сервера: "+result);
             } else {
                 // Тут обработаем код ошибки серевра
-                trayMng.trayMessage("Нет соединения с сервером, не добавлено!");
+                trayMng.trayMessage("Ошибка сервера " + code + ". Не добавлено!");
             }             
             conn.disconnect();
             conn=null;

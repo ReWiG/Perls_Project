@@ -30,7 +30,7 @@ public class Perls {
     static TrayManager trayMng; // Менеджер трея
     
     public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
-        
+        System.setProperty("file.encoding", "UTF-8");
         // Устанавливаем пользователя (подробнее в описании метода)
         author = setAuthor();
         
@@ -110,8 +110,23 @@ public class Perls {
                     if(!ta.getText().isEmpty()) {
                         // Добавляем в базу запись                         
                         ManagerDB m = new ManagerDB();
-                        m.setDB(ta.getText(), author);
+                        String result = m.setDB(ta.getText(), author);
                         
+                        // Обработка результата
+                        switch(result) {
+                            case "The request is successful!":
+                                trayMng.trayMessage("Перл успешно добавлен!");
+                                break;
+                            case "There is no option PERL!":
+                                trayMng.trayMessage("Отсутствует параметр PERL");
+                                break;
+                            case "There is no option AUTHOR!":
+                                trayMng.trayMessage("Отсутствует параметр AUTHOR");
+                                break;
+                            case "The request failed":
+                                trayMng.trayMessage("Ошибка запроса о_О");
+                                break;
+                        }
                         dialog.setVisible(false);
                         //System.exit(0);
                     } else {
