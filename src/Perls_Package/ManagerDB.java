@@ -15,7 +15,7 @@ public class ManagerDB {
         try {
             URL url = new URL(setScriptURL+"?perl="+perl+"&author="+author);
             conn = (HttpURLConnection) url.openConnection();            
-            conn.setRequestProperty("User-Agent", "Java bot123");            
+            conn.setRequestProperty("User-Agent", "Java bot. Author: "+author);            
             conn.connect();            
             int code=conn.getResponseCode();
 
