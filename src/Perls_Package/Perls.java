@@ -1,7 +1,6 @@
 package Perls_Package;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -23,24 +22,28 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-
 public class Perls {
-    
+
     static JFrame frame;
     static JDialog dialog; // Диалог добавления перла
     static String author; // Пользователь приложения
     static TrayManager trayMng; // Менеджер трея
-    
+    static ManagerDB mngDB; // Менеджер БД
+    // Список имён для выделения
+    static String[] names = {"\\[Feuer Herz\\]", "\\[Вы\\]",
+        "\\[Виктор Хомяк\\]", "\\[Кирилл Тестин\\]",
+        "Кирилл", "Виктор",
+        "Нютка", "Feuer"
+    };
+
     public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
         System.setProperty("file.encoding", "UTF-8");
         // Устанавливаем пользователя (подробнее в описании метода)
         author = setAuthor();
-        
+
         // Автивируем трей (и обработчики событий)
         trayMng = new TrayManager();
 
-        
-        
 
         //System.setOut(new PrintStream(System.out, true, "cp866"));
 //        frame = new JFrame("Сингулярность перлов");
@@ -48,19 +51,19 @@ public class Perls {
 //
 //        tf.setText("Разгон Адронного коллайдера, запуск 7990, активация 8350...");
 //        frame.add(tf);
-//        
+//
 //        //Отображение окна.
 //        frame.pack();
 //        frame.setLocationRelativeTo(null);
-//        frame.setVisible(true);        
+//        frame.setVisible(true);
     }
-    
+
     /**
      * Пытается из реестра получить имя пользователя
-     * В случает отсутствия конфига выдает запрос на ввод имени, записывает его в реестр и возвращает 
+     * В случает отсутствия конфига выдает запрос на ввод имени, записывает его в реестр и возвращает
      * @return String author
      */
-    static private String setAuthor() {
+    static public String setAuthor() {
         Preferences userPrefs = Preferences.userRoot().node("perlsconf");
         String ath = userPrefs.get("author", null); // Пытаемся получить значение "author"
         if(ath == null){
@@ -82,7 +85,7 @@ public class Perls {
             return showInputDialog;
         } else {
             return ath;
-        }      
+        }
     }
 
     /**
@@ -102,6 +105,7 @@ public class Perls {
             p.setBorder(new EmptyBorder(10, 10, 10, 10));
             p.add(new JLabel("Добавь свой божественный перл сюда ↓"), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
+            // TextArea
             final JTextArea ta = new JTextArea(20, 25);
             ta.setLineWrap(true);
             ta.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -116,10 +120,17 @@ public class Perls {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(!ta.getText().isEmpty()) {
-                        // Добавляем в базу запись                         
-                        ManagerDB m = new ManagerDB();
-                        String result = m.setDB(ta.getText(), author);
-                        
+
+                        // Заменяем имена для выделения
+                        String perl = ta.getText();
+                        for (String word : names) {
+                            perl = perl.replaceAll(word, "<b>" + word + "</b>");
+                        }
+                        ta.setText(perl);
+                        // Добавляем в базу запись
+                        mngDB = new ManagerDB();
+                        String result = mngDB.setDB(ta.getText(), author);
+
                         // Обработка результата
                         switch(result) {
                             case "The request is successful!":

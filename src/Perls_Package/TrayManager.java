@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.prefs.Preferences;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -42,7 +43,7 @@ public class TrayManager {
             });
             
             JMenuItem addReAuthorItem = new JMenuItem("Установить пользователя");
-            addReAuthorItem.addActionListener(addPerlListener);
+            addReAuthorItem.addActionListener(addReAuthorListener);
             
             JMenuItem addPerlItem = new JMenuItem("Добавить перл");
             addPerlItem.addActionListener(addPerlListener);
@@ -99,4 +100,16 @@ public class TrayManager {
         }
     }
     
+    /**
+     * Переустаналивает пользователя
+     */
+    static ActionListener addReAuthorListener = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Preferences userPrefs = Preferences.userRoot().node("perlsconf");
+            userPrefs.remove("author");
+            Perls.setAuthor();
+        }
+    };
 }
