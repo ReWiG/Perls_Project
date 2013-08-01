@@ -148,6 +148,9 @@ public class Perls {
                             case "Нет соединения с сервером, не добавлено!":
                                 trayMng.trayMessage("Нет соединения с сервером, не добавлено!");
                                 break;
+                            case "DB Error":
+                                trayMng.trayMessage("Ошибка базы данных, не добавлено!");
+                                break;
                             case "Ошибка преобразования строки о_О":
                                 trayMng.trayMessage("Ошибка преобразования строки о_О");
                                 break;
