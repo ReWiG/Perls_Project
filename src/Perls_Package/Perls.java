@@ -43,7 +43,7 @@ public class Perls {
 
         // Автивируем трей (и обработчики событий)
         trayMng = new TrayManager();
-
+        trayMng.trayMessage("Я тут... =)");
 
         //System.setOut(new PrintStream(System.out, true, "cp866"));
 //        frame = new JFrame("Сингулярность перлов");
