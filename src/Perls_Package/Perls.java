@@ -188,4 +188,13 @@ public class Perls {
             dialog.setVisible(true);
         }
     };
+
+    private String selectionNames(String perl) {
+        String text = "";
+        for (String word : names) {
+            
+            text = perl.replaceAll(word, "<b>" + word + "</b>");
+        }
+        return text;
+    }
 }

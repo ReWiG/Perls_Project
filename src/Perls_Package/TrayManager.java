@@ -54,7 +54,7 @@ public class TrayManager {
             popup.add(exitItem);
 
             // Устанавливаем картинку, инициализируем трэй
-            Image image = Toolkit.getDefaultToolkit().getImage("tray.gif");
+            Image image = Toolkit.getDefaultToolkit().getImage(TrayManager.class.getResource("tray.png"));
             trayIcon = new TrayIcon(image, Perls.author);
 
 
