@@ -125,15 +125,9 @@ public class Perls {
                 public void actionPerformed(ActionEvent e) {
                     if(!ta.getText().isEmpty()) {
 
-                        // Заменяем имена для выделения
-                        String perl = ta.getText();
-                        for (String word : names) {
-                            perl = perl.replaceAll(word, "<b>" + word + "</b>");
-                        }
-                        ta.setText(perl);
-                        // Добавляем в базу запись
+                        // Выделяем имена и добавляем в базу запись
                         mngDB = new ManagerDB();
-                        String result = mngDB.setDB(ta.getText(), author);
+                        String result = mngDB.setDB(selectionNames(ta.getText()), author);
 
                         // Обработка результата
                         switch(result) {
@@ -189,12 +183,15 @@ public class Perls {
         }
     };
 
-    private String selectionNames(String perl) {
-        String text = "";
+    /**
+     * Выделяет тегами <b> имена в строке (имена по массиву значений)
+     * @param perl Исходная строка (перл)
+     * @return Строка с заменёнными значениями
+     */
+    private static String selectionNames(String perl) {
         for (String word : names) {
-            
-            text = perl.replaceAll(word, "<b>" + word + "</b>");
+            perl = perl.replaceAll("^" + word, "<b>" + word + "</b>");
         }
-        return text;
+        return perl;
     }
 }
