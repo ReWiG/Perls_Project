@@ -45,6 +45,9 @@ public class Perls {
         // Устанавливаем пользователя (подробнее в описании метода)
         author = setAuthor();
 
+        // Создаём менеджера БД
+        mngDB = new ManagerDB();
+
         // Автивируем трей (и обработчики событий)
         trayMng = new TrayManager();
         trayMng.trayMessage("Я тут... =)");
@@ -126,7 +129,6 @@ public class Perls {
                     if(!ta.getText().isEmpty()) {
 
                         // Выделяем имена и добавляем в базу запись
-                        mngDB = new ManagerDB();
                         String result = mngDB.setDB(selectionNames(ta.getText()), author);
 
                         // Обработка результата
