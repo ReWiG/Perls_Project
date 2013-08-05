@@ -11,11 +11,12 @@ import java.net.URLEncoder;
 
 public class ManagerDB {
     private final String setScriptURL = "http://lolperl.zz.mu/insert_perl_234b_658z_2.php";
+    HttpURLConnection conn = null;
+    String result="";
+    String param;
 
     public String setDB(String perl, String author){
-        HttpURLConnection conn = null;
-        String result="";
-        String param;
+
         try {
             param = "perl=" +
                     URLEncoder.encode(perl, "UTF-8") +
@@ -51,7 +52,7 @@ public class ManagerDB {
                 }
                 in.close();
             } else {
-                // Тут обработаем код ошибки серевра
+                // Тут обработаем код ошибки сервера
                 return "Ошибка сервера " + code + ". Не добавлено!";
             }
         } catch (IOException e) {

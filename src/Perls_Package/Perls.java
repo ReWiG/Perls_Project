@@ -102,13 +102,13 @@ public class Perls {
         public void actionPerformed(ActionEvent e) {
 
             // Модальный диалог
-            addPerlFrame = new JFrame("Добавь перл, сука!");
+            addPerlFrame = new JFrame("Добавить перл");
             addPerlFrame.setIconImage(new ImageIcon(Perls.class.getResource("icon.png")).getImage());
             // Панель
             JPanel p = new JPanel();
             p.setLayout(new GridBagLayout());
             p.setBorder(new EmptyBorder(10, 10, 10, 10));
-            p.add(new JLabel("Добавь свой божественный перл сюда ↓"), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST,
+            p.add(new JLabel("Добавь свой божественный перл сюда"), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
             // TextArea
             final JTextArea ta = new JTextArea(20, 25);
@@ -118,7 +118,7 @@ public class Perls {
 
             p.add(scroll, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.EAST,
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
-            JButton buttonAdd = new JButton("Жги!");
+            JButton buttonAdd = new JButton("Добавить");
 
             // Обработчик нажатия кнопки
             buttonAdd.addActionListener(new ActionListener() {
@@ -143,9 +143,9 @@ public class Perls {
                             case "The request failed":
                                 trayMng.trayMessage("Ошибка запроса о_О");
                                 break;
-                            case "DB Error":
-                                trayMng.trayMessage("Ошибка базы данных, не добавлено!");
-                                break;
+//                            case "DB Error":
+//                                trayMng.trayMessage("Ошибка базы данных, не добавлено!");
+//                                break;
                             default:
                                 trayMng.trayMessage(result);
                                 break;
@@ -161,7 +161,7 @@ public class Perls {
 
             // Переопределяем обработчик закртия окна
             addPerlFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            
+
             // Отображение окна
             addPerlFrame.setContentPane(p);
             addPerlFrame.pack();
