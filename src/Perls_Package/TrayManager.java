@@ -57,18 +57,8 @@ public class TrayManager {
             Image image = Toolkit.getDefaultToolkit().getImage(TrayManager.class.getResource("tray.png"));
             trayIcon = new TrayIcon(image, Perls.author);
 
-
-            ActionListener actionListener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    trayIcon.displayMessage(e.getActionCommand(),
-                            "An Action Event Has Been Performed!",
-                            TrayIcon.MessageType.INFO);
-                }
-            };
-
             trayIcon.setImageAutoSize(true);
-            trayIcon.addActionListener(actionListener);
+            trayIcon.addActionListener(addPerlListener);
             trayIcon.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased(MouseEvent e) {
@@ -76,14 +66,6 @@ public class TrayManager {
                         popup.setLocation(e.getX(), e.getY());
                         popup.setInvoker(popup);
                         popup.setVisible(true);
-                    }
-                }
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if(e.getButton() == MouseEvent.BUTTON2){
-                        System.out.println("Tray Icon - Mouse clicked!");
-                        trayIcon.displayMessage("Я тут", "Заебись", TrayIcon.MessageType.ERROR);
                     }
                 }
             });
