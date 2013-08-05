@@ -3,6 +3,7 @@ package Perls_Package;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -24,8 +26,7 @@ import javax.swing.border.EmptyBorder;
 
 public class Perls {
 
-    static JFrame frame;
-    static JDialog dialog; // Диалог добавления перла
+    static JFrame addPerlFrame; // Окно добавления перла
     static String author; // Пользователь приложения
     static TrayManager trayMng; // Менеджер трея
     static ManagerDB mngDB; // Менеджер БД
@@ -104,8 +105,8 @@ public class Perls {
         public void actionPerformed(ActionEvent e) {
 
             // Модальный диалог
-            dialog = new JDialog(frame, "Добавь перл, сука!", true);
-
+            addPerlFrame = new JFrame("Добавь перл, сука!");
+            addPerlFrame.setIconImage(new ImageIcon(Perls.class.getResource("icon.png")).getImage());
             // Панель
             JPanel p = new JPanel();
             p.setLayout(new GridBagLayout());
@@ -152,7 +153,7 @@ public class Perls {
                                 trayMng.trayMessage(result);
                                 break;
                         }
-                        dialog.setVisible(false);
+                        addPerlFrame.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(null, "Ты не написал ничего =(", "Ащипка!", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -162,20 +163,20 @@ public class Perls {
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
 
             // Переопределяем обработчик закртия окна
-            dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-            dialog.addWindowListener(new WindowAdapter() {
+            addPerlFrame.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            addPerlFrame.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent we) {
                     JOptionPane.showMessageDialog(null, "<html>Ты что с ума сошел? Дорогой друг издалека прилетает на минуточку — а у вас нет <s>торта</s> шутки!?</html>",
                             "Ну... Ц!", JOptionPane.INFORMATION_MESSAGE);
-                    dialog.setVisible(false);
+                    addPerlFrame.setVisible(false);
                 }
             });
             // Отображение окна
-            dialog.setContentPane(p);
-            dialog.pack();
-            dialog.setLocationRelativeTo(null);
-            dialog.setVisible(true);
+            addPerlFrame.setContentPane(p);
+            addPerlFrame.pack();
+            addPerlFrame.setLocationRelativeTo(null);
+            addPerlFrame.setVisible(true);
         }
     };
 
