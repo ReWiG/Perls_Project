@@ -163,15 +163,8 @@ public class Perls {
                 GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 5), 0, 0), 0);
 
             // Переопределяем обработчик закртия окна
-            addPerlFrame.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-            addPerlFrame.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent we) {
-                    JOptionPane.showMessageDialog(null, "<html>Ты что с ума сошел? Дорогой друг издалека прилетает на минуточку — а у вас нет <s>торта</s> шутки!?</html>",
-                            "Ну... Ц!", JOptionPane.INFORMATION_MESSAGE);
-                    addPerlFrame.setVisible(false);
-                }
-            });
+            addPerlFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            
             // Отображение окна
             addPerlFrame.setContentPane(p);
             addPerlFrame.pack();
