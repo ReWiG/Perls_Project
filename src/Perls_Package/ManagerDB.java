@@ -37,6 +37,8 @@ public class ManagerDB {
                     conn.getOutputStream ())) {
                 wr.writeBytes (param);
                 wr.flush ();
+            } catch(Exception e) {
+                return "Невозможно отправить запрос, Не добавлено!";
             }
 
             // Проверка кода ответа
