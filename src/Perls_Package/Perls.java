@@ -186,7 +186,7 @@ public class Perls {
      */
     private static String selectionNames(String perl) {
         for (String word : names) {
-            perl = perl.replaceAll("^" + word, "<b>" + word + "</b>");
+            perl = perl.replaceAll("(?<!<b>\\[)" + word, "<b>" + word + "</b>");
         }
         return perl;
     }
