@@ -20,8 +20,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import com.melloware.jintellitype.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Perls {
 
+    static Transferable trans = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+    static String clipboardText;
     static JFrame addPerlFrame; // Окно добавления перла
     static String author; // Пользователь приложения
     static TrayManager trayMng; // Менеджер трея
@@ -49,19 +58,26 @@ public class Perls {
         trayMng = new TrayManager();
         trayMng.trayMessage("Я тут... =)");
 
-// Initialize JIntellitype
-
-JIntellitype.getInstance();
-JIntellitype.getInstance().registerHotKey(2, JIntellitype.MOD_ALT + JIntellitype.MOD_SHIFT, (int)'B');
-//assign this class to be a HotKeyListener
-JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
-
+        // Initialize JIntellitype
+        JIntellitype.getInstance();
+        JIntellitype.getInstance().registerHotKey(2, JIntellitype.MOD_CONTROL + JIntellitype.MOD_ALT, (int)'C');
+        
+        //assign this class to be a HotKeyListener
+        JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
+            
             @Override
             public void onHotKey(int i) {
-                if (i == 2)
-        System.out.println("WINDOWS+A hotkey pressed");
-    }
-            
+                if (i == 2) {
+                    try {
+                        if (trans != null
+                                && trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                            clipboardText = (String) trans.getTransferData(DataFlavor.stringFlavor);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         });
         
 
