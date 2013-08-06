@@ -12,11 +12,13 @@ import java.net.URLEncoder;
 public class ManagerDB {
     private final String setScriptURL = "http://lolperl.zz.mu/insert_perl_234b_658z_2.php";
     HttpURLConnection conn = null;
-    String result="";
+    String result;
     String param;
 
     public String setDB(String perl, String author){
-
+        
+        result="";
+        
         try {
             param = "perl=" +
                     URLEncoder.encode(perl, "UTF-8") +
