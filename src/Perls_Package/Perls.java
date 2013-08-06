@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -20,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
-
+import com.melloware.jintellitype.*;
 public class Perls {
 
     static JFrame addPerlFrame; // Окно добавления перла
@@ -49,6 +48,25 @@ public class Perls {
         // Автивируем трей (и обработчики событий)
         trayMng = new TrayManager();
         trayMng.trayMessage("Я тут... =)");
+
+// Initialize JIntellitype
+
+JIntellitype.getInstance();
+JIntellitype.getInstance().registerHotKey(2, JIntellitype.MOD_ALT + JIntellitype.MOD_SHIFT, (int)'B');
+//assign this class to be a HotKeyListener
+JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
+
+            @Override
+            public void onHotKey(int i) {
+                if (i == 2)
+        System.out.println("WINDOWS+A hotkey pressed");
+    }
+            
+        });
+        
+
+
+
 
         //System.setOut(new PrintStream(System.out, true, "cp866"));
 //        frame = new JFrame("Сингулярность перлов");
