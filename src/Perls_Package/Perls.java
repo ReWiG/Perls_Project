@@ -24,12 +24,10 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Perls {
 
-    static Transferable trans = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+    static Transferable trans;
     static String clipboardText;
     static JFrame addPerlFrame; // Окно добавления перла
     static String author; // Пользователь приложения
@@ -59,27 +57,33 @@ public class Perls {
         trayMng.trayMessage("Я тут... =)");
 
         // Initialize JIntellitype
+        if(System.getProperty("os.arch").equals("amd64"))
+            JIntellitype.setLibraryLocation(Perls.class.getResource("JIntellitype64.dll").getPath());
+        else
+            JIntellitype.setLibraryLocation(Perls.class.getResource("JIntellitype.dll").getPath());
+
         JIntellitype.getInstance();
-        JIntellitype.getInstance().registerHotKey(2, JIntellitype.MOD_CONTROL + JIntellitype.MOD_ALT, (int)'C');
-        
+        JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL, (int)' ');
+
         //assign this class to be a HotKeyListener
         JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
-            
+
             @Override
             public void onHotKey(int i) {
-                if (i == 2) {
+                if (i == 1) {
                     try {
+                        trans = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
                         if (trans != null
                                 && trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                             clipboardText = (String) trans.getTransferData(DataFlavor.stringFlavor);
+                            System.err.println(clipboardText);
+                            checkResult(mngDB.setDB(clipboardText, author));
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    } catch (UnsupportedFlavorException | IOException e) {}
                 }
             }
         });
-        
+
 
 
 
@@ -160,30 +164,9 @@ public class Perls {
                 public void actionPerformed(ActionEvent e) {
                     if(!ta.getText().isEmpty()) {
 
-                        // Выделяем имена и добавляем в базу запись
-                        String result = mngDB.setDB(selectionNames(ta.getText()), author);
+                        // Выделяем имена и добавляем в базу запись, заетм сразу же обрабатываем результат
+                        checkResult(mngDB.setDB(selectionNames(ta.getText()), author));
 
-                        // Обработка результата
-                        switch(result) {
-                            case "The request is successful!":
-                                trayMng.trayMessage("Перл успешно добавлен!");
-                                break;
-                            case "There is no option PERL!":
-                                trayMng.trayMessage("Отсутствует параметр PERL");
-                                break;
-                            case "There is no option AUTHOR!":
-                                trayMng.trayMessage("Отсутствует параметр AUTHOR");
-                                break;
-                            case "The request failed":
-                                trayMng.trayMessage("Ошибка запроса о_О");
-                                break;
-//                            case "DB Error":
-//                                trayMng.trayMessage("Ошибка базы данных, не добавлено!");
-//                                break;
-                            default:
-                                trayMng.trayMessage(result);
-                                break;
-                        }
                         addPerlFrame.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(null, "Ты не написал ничего =(", "Ащипка!", JOptionPane.INFORMATION_MESSAGE);
@@ -203,6 +186,31 @@ public class Perls {
             addPerlFrame.setVisible(true);
         }
     };
+
+    private static void checkResult(String result){
+        // Обработка результата
+
+        switch(result) {
+            case "The request is successful!":
+                trayMng.trayMessage("Перл успешно добавлен!");
+                break;
+            case "There is no option PERL!":
+                trayMng.trayMessage("Отсутствует параметр PERL");
+                break;
+            case "There is no option AUTHOR!":
+                trayMng.trayMessage("Отсутствует параметр AUTHOR");
+                break;
+            case "The request failed":
+                trayMng.trayMessage("Ошибка запроса о_О");
+                break;
+//                            case "DB Error":
+//                                trayMng.trayMessage("Ошибка базы данных, не добавлено!");
+//                                break;
+            default:
+                trayMng.trayMessage(result);
+                break;
+        }
+    }
 
     /**
      * Выделяет тегами <b> имена в строке (имена по массиву значений)

@@ -1,6 +1,7 @@
 package Perls_Package;
 
 import static Perls_Package.Perls.addPerlListener;
+import com.melloware.jintellitype.JIntellitype;
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.SystemTray;
@@ -38,6 +39,7 @@ public class TrayManager {
             exitItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    JIntellitype.getInstance().cleanUp();
                     System.exit(0);
                 }
             });
