@@ -1,9 +1,15 @@
 package Perls_Package;
 
+import com.melloware.jintellitype.HotkeyListener;
+import com.melloware.jintellitype.JIntellitype;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -19,11 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
-import com.melloware.jintellitype.*;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 
 public class Perls {
 
@@ -57,13 +58,18 @@ public class Perls {
         trayMng.trayMessage("Я тут... =)");
 
         // Initialize JIntellitype
-        if(System.getProperty("os.arch").equals("amd64"))
-            JIntellitype.setLibraryLocation(Perls.class.getResource("JIntellitype64.dll").getPath());
-        else
-            JIntellitype.setLibraryLocation(Perls.class.getResource("JIntellitype.dll").getPath());
+        try {
+            if(System.getProperty("os.arch").contains("64"))
+                JIntellitype.setLibraryLocation("JIntellitype64.dll");
+            else
+                JIntellitype.setLibraryLocation("JIntellitype.dll");
+        } catch (Exception e) {
+            trayMng.trayMessage("Невозможно загрузить необходимые библиотеки");
+            System.exit(0);
+        }
 
         JIntellitype.getInstance();
-        JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL, (int)' ');
+        JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL + JIntellitype.MOD_ALT, (int)' ');
 
         //assign this class to be a HotKeyListener
         JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
