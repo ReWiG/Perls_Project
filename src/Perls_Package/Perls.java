@@ -208,9 +208,6 @@ public class Perls {
             case "The request failed":
                 trayMng.trayMessage("Ошибка запроса о_О");
                 break;
-//                            case "DB Error":
-//                                trayMng.trayMessage("Ошибка базы данных, не добавлено!");
-//                                break;
             default:
                 trayMng.trayMessage(result);
                 break;
@@ -224,7 +221,7 @@ public class Perls {
      */
     private static String selectionNames(String perl) {
         for (String word : names) {
-            perl = perl.replaceAll("(?<!<b>\\[)" + word, "<b>" + word + "</b>");
+            perl = perl.replaceAll("(?<!<b>|\\[)" + word, "<b>" + word + "</b>");
         }
         return perl;
     }
