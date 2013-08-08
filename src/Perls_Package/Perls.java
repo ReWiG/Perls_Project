@@ -29,7 +29,6 @@ import javax.swing.border.EmptyBorder;
 public class Perls {
 
     static Transferable trans;
-    static String clipboardText;
     static JFrame addPerlFrame; // Окно добавления перла
     static String author; // Пользователь приложения
     static TrayManager trayMng; // Менеджер трея
@@ -65,6 +64,7 @@ public class Perls {
                 JIntellitype.setLibraryLocation("JIntellitype.dll");
         } catch (Exception e) {
             trayMng.trayMessage("Невозможно загрузить необходимые библиотеки");
+            Thread.sleep(5000);
             System.exit(0);
         }
 
@@ -81,9 +81,8 @@ public class Perls {
                         trans = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
                         if (trans != null
                                 && trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                            clipboardText = (String) trans.getTransferData(DataFlavor.stringFlavor);
-                            System.err.println(clipboardText);
-                            checkResult(mngDB.setDB(clipboardText, author));
+                            checkResult(mngDB.setDB(selectionNames(
+                                    (String)trans.getTransferData(DataFlavor.stringFlavor)), author));
                         }
                     } catch (UnsupportedFlavorException | IOException e) {}
                 }
