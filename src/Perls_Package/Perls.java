@@ -56,7 +56,7 @@ public class Perls {
         trayMng = new TrayManager();
         trayMng.trayMessage("Я тут... =)");
 
-        // Initialize JIntellitype
+        // Инициализируем JIntellitype
         try {
             if(System.getProperty("os.arch").contains("64"))
                 JIntellitype.setLibraryLocation("JIntellitype64.dll");
@@ -67,11 +67,12 @@ public class Perls {
             Thread.sleep(5000);
             System.exit(0);
         }
-
         JIntellitype.getInstance();
+        
+        // Добавляем комбинацию горячих клавиш
         JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL + JIntellitype.MOD_ALT, (int)' ');
 
-        //assign this class to be a HotKeyListener
+        // Добавляем обработчик нажатия горяжих клавиш
         JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
 
             @Override
@@ -215,7 +216,8 @@ public class Perls {
     }
 
     /**
-     * Выделяет тегами <b> имена в строке (имена по массиву значений)
+     * Выделяет тегами <b> имена в строке (имена по массиву значений),
+     * заменяет тегами <br /> переносы строк
      * @param perl Исходная строка (перл)
      * @return Строка с заменёнными значениями
      */
@@ -223,6 +225,6 @@ public class Perls {
         for (String word : names) {
             perl = perl.replaceAll("(?<!<b>|\\[)" + word, "<b>" + word + "</b>");
         }
-        return perl;
+        return perl.replaceAll("[\\r\\n]+", "<br />");
     }
 }
